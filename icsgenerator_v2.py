@@ -58,6 +58,7 @@ shift_time = {
 # Shifts considered as working
 WORKING_SHIFTS = {"S1", "G", "S2", "EVE", "S3"}
 
+"""
 # =========================================================
 # ⚠️ TEMP DATA (TO BE REPLACED WITH EXCEL IN NEXT STEP)
 # =========================================================
@@ -72,6 +73,35 @@ shifts = {
     "Sathiesh M": ["S1", "OFF"],
     "John": ["S1", "S2"]
 }
+"""
+# =========================================================
+# 📊 READ EXCEL FILE
+# =========================================================
+
+df = pd.read_excel(excel_path)
+
+# First column = Names
+names = df.iloc[:, 0].dropna().tolist()
+
+# Remaining columns = Dates
+date_columns = df.columns[1:]
+
+# Convert column headers to required format (e.g., 01-Apr)
+dates = [pd.to_datetime(col).strftime("%d-%b") for col in date_columns]
+
+# Build shifts dictionary
+shifts = {}
+
+for i, name in enumerate(names):
+    shifts[name] = []
+
+    for col in date_columns:
+        value = df.iloc[i][col]
+
+        if pd.isna(value):
+            shifts[name].append("OFF")
+        else:
+            shifts[name].append(str(value).strip())
 
 # =========================================================
 # 📅 ICS FILE GENERATION
